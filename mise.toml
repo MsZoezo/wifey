@@ -1,0 +1,11 @@
+[tools]
+go = "latest"
+"go:github.com/spf13/cobra-cli" = "latest"
+
+[tasks.run]
+description = "Build and run wifey directly."
+run = "go run ."
+
+[tasks.build]
+description = "Build wifey"
+run = "go build"
