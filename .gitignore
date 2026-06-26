@@ -33,3 +33,6 @@ go.work.sum
 
 # Build directories
 out/
+
+# Ignore local config.toml incase my dumbass pushes api keys again
+config.toml

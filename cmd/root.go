@@ -1,21 +1,28 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+var (
+	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "wifey",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Send & receive messages to/from your nerdy wifey (or anyone really!) :3",
+	// TODO: Add a long description for wifey. :3
+	// Long: ``,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return initConfig(cmd)
+	},
 }
 
 func Execute() {
@@ -27,4 +34,36 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/wifey/config.toml)")
+}
+
+func initConfig(cmd *cobra.Command) error {
+	viper.SetEnvPrefix("WIFEY")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "*", "-", "*"))
+	viper.AutomaticEnv()
+
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	}
+
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("$HOME/.config/wifey/")
+	viper.SetConfigName("config")
+	viper.SetConfigType("toml")
+
+	if err := viper.ReadInConfig(); err != nil {
+		var configFileNotFoundError viper.ConfigFileNotFoundError
+		if errors.As(err, &configFileNotFoundError) {
+			return fmt.Errorf("Config file is required.")
+		} else {
+			return err
+		}
+	}
+
+	err := viper.BindPFlags(cmd.Flags())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
