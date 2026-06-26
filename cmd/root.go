@@ -35,6 +35,9 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/wifey/config.toml)")
+
+	rootCmd.PersistentFlags().String("name", "", "Sets your name, be silly ;3")
+	viper.BindPFlag("general.name", rootCmd.PersistentFlags().Lookup("name"))
 }
 
 func initConfig(cmd *cobra.Command) error {

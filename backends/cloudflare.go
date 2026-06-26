@@ -8,6 +8,11 @@ import (
 	"github.com/cloudflare/cloudflare-go/v7/queues"
 )
 
+type Message struct {
+	Name    string `json:"name"`
+	Message string `json:"message"`
+}
+
 type CloudflareBackend struct {
 	client cloudflare.Client
 
@@ -28,7 +33,7 @@ func New(token string, queueId string, accountId string) *CloudflareBackend {
 	return c
 }
 
-func (c *CloudflareBackend) Send(message string) error {
+func (c *CloudflareBackend) Send(message Message) error {
 	_, err := c.client.Queues.Messages.Push(
 		context.TODO(),
 		c.queueId,
@@ -36,7 +41,7 @@ func (c *CloudflareBackend) Send(message string) error {
 			AccountID: cloudflare.F(c.accountId),
 			Body: queues.MessagePushParamsBody{
 				Body:        cloudflare.F[interface{}](message),
-				ContentType: cloudflare.F(queues.MessagePushParamsBodyContentTypeText),
+				ContentType: cloudflare.F(queues.MessagePushParamsBodyContentTypeJson),
 			},
 		},
 	)

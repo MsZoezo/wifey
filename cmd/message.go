@@ -29,21 +29,18 @@ to quickly create a Cobra application.`,
 
 		message := strings.Join(args, " ")
 
-		fmt.Printf("Message: '%v'\n", message)
+		name := viper.GetString("general.name")
 
 		token := viper.GetString("cloudflare.token")
 		accountId := viper.GetString("cloudflare.accountId")
-		queueId := viper.GetString("cloudflare.queueId")
-
-		fmt.Println(token)
+		queueId := viper.GetString("cloudflare.sendQueueId")
 
 		client := backends.New(token, queueId, accountId)
 
-		if client == nil {
-			fmt.Println("AAAAA")
-		}
-
-		err := client.Send(message)
+		err := client.Send(backends.Message{
+			Name:    name,
+			Message: message,
+		})
 
 		return err
 	},
@@ -51,14 +48,4 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(messageCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// messageCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// messageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
