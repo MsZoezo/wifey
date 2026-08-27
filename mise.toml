@@ -3,4 +3,8 @@ go = "latest"
 
 [tasks.build]
 description = "Build wifey"
-run = "go build -o out/"
+run = "go build ./cmd/wifey -o out/"
+
+[tasks.wifey]
+description = "Run wifey"
+run = "go run ./cmd/wifey"

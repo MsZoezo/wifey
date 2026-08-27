@@ -1,7 +1,7 @@
 package main
 
 import (
-	"wifey/cmd"
+	cmd "wifey/internal/cli"
 )
 
 func main() {
